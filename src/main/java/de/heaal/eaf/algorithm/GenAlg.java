@@ -10,7 +10,6 @@ import de.heaal.eaf.mutation.Mutation;
 import de.heaal.eaf.mutation.MutationOptions;
 import de.heaal.eaf.mutation.MutationOptions.KEYS;
 import de.heaal.eaf.mutation.MutationScope;
-import de.heaal.eaf.mutation.RandomMutation;
 import de.heaal.eaf.selection.SelectionUtils;
 
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class GenAlg extends Algorithm {
 
         int numOfGenerations = 0;
 
-        while (numOfGenerations < 1000) {
+        while (!isTerminationCondition()) {
             numOfGenerations++;
             nextGeneration();
             System.out.println(population.get(0).getCache());

@@ -36,12 +36,11 @@ import java.util.stream.Stream;
 /**
  * Class representing an algorithm's population.
  *
- * @param <T>
  * @author Christian Lins <christian.lins@haw-hamburg.de>
  */
-public class Population<T extends Individual> implements Iterable<T> {
+public class Population implements Iterable<Individual> {
 
-    protected List<T> individuals;
+    protected List<Individual> individuals;
 
     /**
      * Create and initialize this population with num individuals using the
@@ -50,11 +49,10 @@ public class Population<T extends Individual> implements Iterable<T> {
      * @param iFak
      * @param num
      */
-    public Population(IndividualFactory<T> iFak, int num) {
-        individuals = (List<T>) Stream.generate(() -> iFak.create())
+    public Population(IndividualFactory iFak, int num) {
+        individuals = Stream.generate(() -> iFak.create())
                 .limit(num)
                 .collect(Collectors.toList());
-
     }
 
     /**
@@ -67,25 +65,26 @@ public class Population<T extends Individual> implements Iterable<T> {
         individuals = new ArrayList<>(initialCapacity);
     }
 
-    public void setIndividuals(List<T> individuals) {
+    public void setIndividuals(List<Individual> individuals) {
         this.individuals = individuals;
+    }
+
+    public void clear() {
+        individuals.clear();
     }
 
     public void removeFirstN(int n) {
         individuals.subList(0, n).clear();
     }
 
-    public void add(T ind) {
+    public void add(Individual ind) {
         individuals.add(ind);
     }
 
-    public T get(int idx) {
+    public Individual get(int idx) {
         return individuals.get(idx);
     }
 
-    public <T> T get(int idx, Class<T> clazz) {
-        return (T) get(idx);
-    }
 
     /**
      * Returns a copy of this population individuals list.
@@ -96,8 +95,7 @@ public class Population<T extends Individual> implements Iterable<T> {
         return new ArrayList<>(individuals);
     }
 
-    public void set(int idx, T ind) {
-
+    public void set(int idx, Individual ind) {
         individuals.set(idx, ind);
     }
 
@@ -123,8 +121,7 @@ public class Population<T extends Individual> implements Iterable<T> {
         return individuals.iterator();
     }
 
-    public void sort(Comparator<T> cmp) {
-
+    public void sort(Comparator<Individual> cmp) {
         // This should sort descending
         individuals.sort(cmp.reversed());
     }

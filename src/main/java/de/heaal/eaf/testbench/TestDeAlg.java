@@ -1,7 +1,7 @@
 package de.heaal.eaf.testbench;
 
+import de.heaal.eaf.algorithm.DeAlg;
 import de.heaal.eaf.algorithm.GenAlg;
-import de.heaal.eaf.algorithm.HillClimbingAlgorithm;
 import de.heaal.eaf.base.Individual;
 import de.heaal.eaf.crossover.AverageCombination;
 import de.heaal.eaf.evaluation.ComparatorIndividual;
@@ -12,16 +12,11 @@ import de.heaal.eaf.mutation.RandomMutation;
 import java.util.Comparator;
 import java.util.function.Function;
 
-public class TestGenAlg {
+public class TestDeAlg {
 
     public static void main(String[] args) {
         // runAckleyWithStats(10);
-
         runAckley();
-        //double res = ackley20Dims(new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        //        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
-
-        //System.out.println(res);
     }
 
     private static void runAckley() {
@@ -35,10 +30,6 @@ public class TestGenAlg {
 
         Comparator comparator = new MinimizeFunctionComparator(evalAckleyFunc);
 
-        var algoHC = new HillClimbingAlgorithm(min, max,
-                comparator, new RandomMutation(min, max),
-                new ComparatorIndividual(0.0000001f));
-
         var algoGA = new GenAlg(min, max,
                 comparator,
                 new RandomMutation(min, max),
@@ -49,7 +40,15 @@ public class TestGenAlg {
                 4,
                 MutationScope.CHILDS_PARENTS);
 
-        algoHC.run();
+        var algoDe = new DeAlg(
+                comparator,
+                min, max,
+                new ComparatorIndividual(1.000f),
+                0.6f,
+                0.5f,
+                5000);
+
+        algoDe.run();
     }
 
     public static void runAckleyWithStats(int numOfRuns) {
@@ -75,4 +74,5 @@ public class TestGenAlg {
         return (float) (-20.0 * Math.exp(-0.2 * Math.sqrt(sum1 / ((double) x.length))) + 20
                 - Math.exp(sum2 / ((double) x.length)) + Math.exp(1.0));
     }
+
 }
