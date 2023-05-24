@@ -11,23 +11,24 @@ public class ZugSpiel extends JPanel {
 
     private int zugX = 50; // Anfangsposition des Zuges auf der x-Achse
     private int zugY = 200; // Anfangsposition des Zuges auf der y-Achse
-    private int zielX = 500; // Zielposition auf der x-Achse
-    private int zielY = 200; // Zielposition auf der y-Achse
+    private int goalX = 500; // Zielposition auf der x-Achse
+    private int goalY = 200; // Zielposition auf der y-Achse
     private BufferedImage trainStationImg;
+    private BufferedImage startStationImg;
     private BufferedImage trainImg;
 
     //private BufferedImage trainstationImg;
 
     public void bewegeZug() {
-        if (zugX < zielX) {
+        if (zugX < goalX) {
             zugX += 1; // Zug nach rechts bewegen
-        } else if (zugX > zielX) {
+        } else if (zugX > goalX) {
             zugX -= 1; // Zug nach links bewegen
         }
 
-        if (zugY < zielY) {
+        if (zugY < goalY) {
             zugY += 1; // Zug nach unten bewegen
-        } else if (zugY > zielY) {
+        } else if (zugY > goalY) {
             zugY -= 1; // Zug nach oben bewegen
         }
     }
@@ -38,15 +39,22 @@ public class ZugSpiel extends JPanel {
         //g.setColor(Color.GREEN);
         //g.fillOval(zielX, zielY, 20, 20); // Ziel zeichnen
 
+        //Railroad
+        g.setColor(Color.GRAY);
+        g.drawLine(0, 235, getWidth(), 235);
+        g.drawLine(0, 237, getWidth(), 237);
+
         try {
             trainStationImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainStation.png"));
+            startStationImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\startStation.png"));
             trainImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainSmall.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         //g.setColor(Color.RED);
         //g.fillRect(zugX, zugY, 50, 20); // Zug zeichnen
-        g.drawImage(trainStationImg,zielX, zielY, null); // draw trainstation
+        g.drawImage(trainStationImg,500, 150, null); // draw trainstation
+        g.drawImage(startStationImg,50, 140, null); // draw trainstation
         g.drawImage(trainImg,zugX, zugY, null); // draw train
 
     }
@@ -55,7 +63,7 @@ public class ZugSpiel extends JPanel {
         JFrame frame = new JFrame("Zug Spiel");
         ZugSpiel zugSpiel = new ZugSpiel();
         frame.add(zugSpiel);
-        frame.setSize(600, 400);
+        frame.setSize(800, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
