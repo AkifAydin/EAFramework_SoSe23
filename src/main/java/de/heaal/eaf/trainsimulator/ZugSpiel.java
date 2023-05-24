@@ -1,14 +1,22 @@
 package de.heaal.eaf.trainsimulator;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class ZugSpiel extends JPanel {
 
-    private int zugX = 50; // Anfangsposition des Zuges auf der X-Achse
-    private int zugY = 200; // Anfangsposition des Zuges auf der Y-Achse
-    private int zielX = 500; // Zielposition auf der X-Achse
-    private int zielY = 200; // Zielposition auf der Y-Achse
+    private int zugX = 50; // Anfangsposition des Zuges auf der x-Achse
+    private int zugY = 200; // Anfangsposition des Zuges auf der y-Achse
+    private int zielX = 500; // Zielposition auf der x-Achse
+    private int zielY = 200; // Zielposition auf der y-Achse
+    private BufferedImage trainStationImg;
+    private BufferedImage trainImg;
+
+    //private BufferedImage trainstationImg;
 
     public void bewegeZug() {
         if (zugX < zielX) {
@@ -27,10 +35,20 @@ public class ZugSpiel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.GREEN);
-        g.fillOval(zielX, zielY, 20, 20); // Ziel zeichnen
-        g.setColor(Color.RED);
-        g.fillRect(zugX, zugY, 50, 20); // Zug zeichnen
+        //g.setColor(Color.GREEN);
+        //g.fillOval(zielX, zielY, 20, 20); // Ziel zeichnen
+
+        try {
+            trainStationImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainStation.png"));
+            trainImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainSmall.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //g.setColor(Color.RED);
+        //g.fillRect(zugX, zugY, 50, 20); // Zug zeichnen
+        g.drawImage(trainStationImg,zielX, zielY, null); // draw trainstation
+        g.drawImage(trainImg,zugX, zugY, null); // draw train
+
     }
 
     public static void main(String[] args) {
