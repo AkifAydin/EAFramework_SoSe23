@@ -48,7 +48,7 @@ public class TestDeAlg {
                 0.5f,
                 5000);
 
-        algoDe.run();
+        algoGA.run();
     }
 
     public static void runAckleyWithStats(int numOfRuns) {

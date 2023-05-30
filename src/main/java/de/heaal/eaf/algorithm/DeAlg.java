@@ -106,7 +106,7 @@ public class DeAlg extends Algorithm {
         }
 
         for (int i = 0; i < populationSize; i++) {
-            if (comparator.compare(population.get(i), newPopulation.get(i)) < 0) { // TODO FIXME
+            if (comparator.compare(population.get(i), newPopulation.get(i)) < 0) {
                 population.set(i, newPopulation.get(i));
             }
         }
