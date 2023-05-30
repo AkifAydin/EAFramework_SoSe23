@@ -5,42 +5,42 @@ public class TrainVerySimple {
     /**
      * As m/s
      */
-    private final int maxSpeed;
+    private final double maxSpeed;
 
     /**
      * As mliter or wh
      */
-    private int powerLevel;
+    private double powerLevel;
 
     /**
      * As mliter or wh per meter
      */
-    private final int powerConsumption;
+    private final double powerConsumption;
 
-    private int elapsedSeconds = 0;
-    private int elapsedMeters = 0;
-    private int currentSpeed = 0;
+    private double elapsedSeconds = 0;
+    private double elapsedMeters = 0;
+    private double currentSpeed = 0;
 
-    public TrainVerySimple(int maxSpeed, int powerLevel, int powerConsumption) {
+    public TrainVerySimple(double maxSpeed, double powerLevel, double powerConsumption) {
         this.maxSpeed = maxSpeed;
         this.powerLevel = powerLevel;
         this.powerConsumption = powerConsumption;
     }
 
-    public int getElapsedMeters() {
+    public double getElapsedMeters() {
         return elapsedMeters;
     }
 
-    public int getElapsedSeconds() {
+    public double getElapsedSeconds() {
         return elapsedSeconds;
     }
 
-    public int getPowerLevel() {
+    public double getPowerLevel() {
         return powerLevel;
     }
 
-    public int increaseSpeedBy(int mPerS) {
-        int finalSpeed = currentSpeed + mPerS;
+    public double increaseSpeedBy(double mPerS) {
+        double finalSpeed = currentSpeed + mPerS;
 
         if (finalSpeed > maxSpeed) {
             currentSpeed = maxSpeed;
@@ -51,8 +51,8 @@ public class TrainVerySimple {
         return finalSpeed;
     }
 
-    public int deCreaseSpeedBy(int mPerS) {
-        int finalSpeed = currentSpeed - mPerS;
+    public double deCreaseSpeedBy(double mPerS) {
+        double finalSpeed = currentSpeed - mPerS;
 
         if (finalSpeed < 0) {
             currentSpeed = 0;
@@ -72,9 +72,9 @@ public class TrainVerySimple {
     //isRunning
     //isMoving
     //doNothing
-    public int justDrive(int seconds) {
-        int metersToDrive = currentSpeed * seconds;
-        int powerConsumption = getPowerConsumptionPerMeter() * metersToDrive;
+    public double justDrive(double seconds) {
+        double metersToDrive = currentSpeed * seconds;
+        double powerConsumption = getPowerConsumptionPerMeter() * metersToDrive;
 
         if (powerLevel < powerConsumption) {
             throw new IllegalArgumentException("If you drive this much, you will run out of fuel!");
