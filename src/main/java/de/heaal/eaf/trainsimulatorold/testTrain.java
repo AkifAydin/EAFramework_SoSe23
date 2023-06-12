@@ -1,4 +1,4 @@
-package de.heaal.eaf.trainsimulator;
+package de.heaal.eaf.trainsimulatorold;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -44,9 +44,9 @@ public class testTrain extends JPanel implements ActionListener {
 
 
         try {
-            trainStationImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainStation.png"));
-            startStationImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\startStation.png"));
-            trainImg = ImageIO.read(new File("C:\\Users\\akifn\\IdeaProjects\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainSmall.png"));
+            trainStationImg = ImageIO.read(new File("C:\\G_Drive\\Work_Werum_Studium\\#EvolutionäreAlgorithmen\\Project\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainStation.png"));
+            startStationImg = ImageIO.read(new File("C:\\G_Drive\\Work_Werum_Studium\\#EvolutionäreAlgorithmen\\Project\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\startStation.png"));
+            trainImg = ImageIO.read(new File("C:\\G_Drive\\Work_Werum_Studium\\#EvolutionäreAlgorithmen\\Project\\EAFramework_SoSe23\\src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainSmall.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

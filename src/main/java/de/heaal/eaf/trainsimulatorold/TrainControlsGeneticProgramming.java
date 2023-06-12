@@ -1,4 +1,4 @@
-package de.heaal.eaf.trainsimulator;
+package de.heaal.eaf.trainsimulatorold;
 
 import io.jenetics.Genotype;
 import io.jenetics.Mutator;
@@ -11,7 +11,7 @@ import io.jenetics.prog.op.*;
 import io.jenetics.util.ISeq;
 import io.jenetics.util.RandomRegistry;
 
-import static de.heaal.eaf.trainsimulator.TrainFitness.*;
+import static de.heaal.eaf.trainsimulatorold.TrainFitness.*;
 
 public class TrainControlsGeneticProgramming {
     public static final Double MAX_VELOCITY = 10.0;

@@ -1,4 +1,4 @@
-package de.heaal.eaf.trainsimulator;
+package de.heaal.eaf.trainsimulatorold;
 
 import io.jenetics.prog.op.MathExpr;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static de.heaal.eaf.trainsimulator.TrainControlsGeneticProgramming.MAX_VELOCITY;
+import static de.heaal.eaf.trainsimulatorold.TrainControlsGeneticProgramming.MAX_VELOCITY;
 
 public class TrainFitness implements Comparable<TrainFitness> {
     static Double STEP = 1.0;

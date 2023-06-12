@@ -1,4 +1,4 @@
-package de.heaal.eaf.trainsimulator;
+package de.heaal.eaf.trainsimulatorold;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
