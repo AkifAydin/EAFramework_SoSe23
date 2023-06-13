@@ -95,6 +95,8 @@ public class Zugfahrt {
         System.out.println("Zug Entfehrnung:  " + z.getEntfernung());
         System.out.println("Zug Energie:      " + z.getEnergie());
         System.out.println("Zug Elapsed Time: " + z.getElapsedTime());
+        TrainSimulation trainSimulater = new TrainSimulation((int) z.getEntfernung(), first100Nodes);
+        trainSimulater.simulate();
     }
 
     public static void getFirstNElementsFromTree(List<Op<Double>> result, TreeNode<Op<Double>> node, int n) {

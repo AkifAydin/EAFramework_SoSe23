@@ -1,4 +1,6 @@
-package de.heaal.eaf.trainsimulatorold;
+package de.heaal.eaf.trainsimulator;
+
+import io.jenetics.prog.op.Op;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,8 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-public class testTrain extends JPanel implements ActionListener {
+public class TrainSimulation extends JPanel implements ActionListener {
 
 
     private static final int SCREEN_WIDTH = 800;
@@ -24,11 +27,14 @@ public class testTrain extends JPanel implements ActionListener {
     private BufferedImage trainStationImg;
     private BufferedImage startStationImg;
     private BufferedImage trainImg;
+    private int distanceTraveled;
 
-    public testTrain() {
+
+    public TrainSimulation(int zielEntfernung, List<Op<Double>> first100Nodes) {
         trainX = SCREEN_WIDTH / 2 - TRAIN_WIDTH / 2; // Center train horizontally
-        aimX = 2000; // Aim position (far away on the right side)
+        aimX = zielEntfernung; // Aim position (far away on the right side)
         cameraX = SCREEN_WIDTH / 2 - TRAIN_WIDTH / 2; // Initial camera position (centered)
+        distanceTraveled = SCREEN_WIDTH / 2; // Initialize the distance traveled to Screen_Width/2 bcs we start in the middle of the screen
 
         Timer timer = new Timer(10, this);
         timer.start();
@@ -44,9 +50,9 @@ public class testTrain extends JPanel implements ActionListener {
 
 
         try {
-            trainStationImg = ImageIO.read(new File("src\\main\\java\\de\\heaal\\eaf\\trainsimulatorold\\images\\trainStation.png"));
-            startStationImg = ImageIO.read(new File("src\\main\\java\\de\\heaal\\eaf\\trainsimulatorold\\images\\startStation.png"));
-            trainImg = ImageIO.read(new File("src\\main\\java\\de\\heaal\\eaf\\trainsimulatorold\\images\\trainSmall.png"));
+            trainStationImg = ImageIO.read(new File("src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainStation.png"));
+            startStationImg = ImageIO.read(new File("src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\startStation.png"));
+            trainImg = ImageIO.read(new File("src\\main\\java\\de\\heaal\\eaf\\trainsimulator\\images\\trainSmall.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -55,6 +61,12 @@ public class testTrain extends JPanel implements ActionListener {
         g2d.setColor(Color.GRAY);
         g2d.drawLine(0, 326, SCREEN_WIDTH + aimX, 326);
         g2d.drawLine(0, 329, SCREEN_WIDTH + aimX, 329);
+
+        // Draw distance traveled
+        g2d.setColor(Color.BLACK);
+        g2d.drawString("DistanceTraveled: " + distanceTraveled+"km", cameraX + 10, 20);
+        g2d.drawString("Goal: " + aimX+"km", cameraX + 10, 40);
+
 
         // Draw aimStation (if visible)
         if (aimX >= cameraX && aimX <= cameraX + SCREEN_WIDTH) {
@@ -67,6 +79,7 @@ public class testTrain extends JPanel implements ActionListener {
         g2d.drawImage(trainImg, trainX - 65, SCREEN_HEIGHT / 2 - TRAIN_HEIGHT / 2, null);
 
 
+
         g2d.dispose();
     }
 
@@ -77,13 +90,27 @@ public class testTrain extends JPanel implements ActionListener {
             // Stop the train and camera
             trainX = aimX;
             cameraX = aimX - SCREEN_WIDTH / 2 + TRAIN_WIDTH / 2;
+            //distanceTraveled = aimX; // Update the distance traveled
         } else {
             // Move the train and camera towards the aim
             trainX += TRAIN_SPEED;
             cameraX = trainX - SCREEN_WIDTH / 2 + TRAIN_WIDTH / 2;
+            distanceTraveled = trainX; // Update the distance traveled
         }
 
         repaint();
+    }
+
+    public void simulate() {
+        JFrame frame = new JFrame("Train Simulation");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        TrainSimulation panel = new TrainSimulation(aimX, null);
+        panel.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
+        frame.add(panel);
+
+        frame.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -91,12 +118,11 @@ public class testTrain extends JPanel implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        testTrain panel = new testTrain();
+        TrainSimulation panel = new TrainSimulation(2000, null);
         panel.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         frame.add(panel);
 
         frame.setVisible(true);
     }
-
 
 }
