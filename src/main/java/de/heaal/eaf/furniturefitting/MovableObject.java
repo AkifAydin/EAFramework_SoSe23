@@ -4,13 +4,15 @@ import java.awt.*;
 
 public class MovableObject extends Polygon {
 
-    private int centerPointX;
-    private int centerPointY;
+    private Point centerPoint;
 
     public MovableObject(int[] xPoints, int[] yPoints, Point centerPoint) {
         super(xPoints, yPoints, xPoints.length);
-        this.centerPointX = centerPoint.x;
-        this.centerPointY = centerPoint.y;
+        this.centerPoint = centerPoint;
+    }
+
+    public double getDistanceToPoint(Point point) {
+        return centerPoint.distance(point);
     }
 
     public void moveToByAngleAndDist(double angleDegrees, double distance) {
@@ -27,8 +29,8 @@ public class MovableObject extends Polygon {
             ypoints[i] = (int) (ypoints[i] + verticalComponent);
         }
 
-        centerPointX = (int) (centerPointX + horizontalComponent);
-        centerPointY = (int) (centerPointY + verticalComponent);
+        centerPoint.x = (int) (centerPoint.x + horizontalComponent);
+        centerPoint.y = (int) (centerPoint.y + verticalComponent);
     }
 
     public void moveToByDelta(double deltaX, double deltaY) {
@@ -38,8 +40,8 @@ public class MovableObject extends Polygon {
             ypoints[i] += (int) deltaY;
         }
 
-        centerPointX += (int) deltaX;
-        centerPointY += (int) deltaY;
+        centerPoint.x += (int) deltaX;
+        centerPoint.y += (int) deltaY;
     }
 
     public void turn(double refX, double refY, double angle) {

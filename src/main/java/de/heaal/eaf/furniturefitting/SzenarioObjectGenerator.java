@@ -22,16 +22,19 @@ public enum SzenarioObjectGenerator {
             250, 180, 180, 180, 120, 180, 180, 350, 250, 250, 450, 250, 250, 575, 575,
             500, 575, 575, 400, 575, 575, 575, 690, 690, 575};
 
-    public static MovableObject getNewMovableObject() {
+    public MovableObject getNewMovableObject() {
         return new MovableObject(xPointsObject, yPointsObject, centerPoint);
     }
 
-    public static Polygon getRoom() {
-        if (room != null) {
-            return room;
-        } else {
+    public Polygon getRoom() {
+        if (room == null) {
             room = new Polygon(xPointsRoom, yPointsRoom, xPointsRoom.length);
-            return room;
         }
+
+        return room;
+    }
+
+    public Point getDestination() {
+        return new Point(150, 150);
     }
 }
