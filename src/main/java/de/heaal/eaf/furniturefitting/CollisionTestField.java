@@ -11,13 +11,13 @@ public class CollisionTestField {
         int[] xPoints1 = {5, 10, 10, 5};
         int[] yPoints1 = {9, 9, 14, 14};
 
-        MovableObject mo1 = new MovableObject(xPoints1, yPoints1, 4);
+        MovableObject mo1 = new MovableObject(xPoints1, yPoints1, new Point(5, 9));
 
         // Create a polygon with some points
         int[] xPoints2 = {12, 17, 17, 12};
         int[] yPoints2 = {3, 3, 8, 8};
 
-        MovableObject mo2 = new MovableObject(xPoints2, yPoints2, 4);
+        MovableObject mo2 = new MovableObject(xPoints2, yPoints2, new Point(12, 3));
 
         // Create a polygon with some points
         int[] otherXPoints = {3, 11, 11};

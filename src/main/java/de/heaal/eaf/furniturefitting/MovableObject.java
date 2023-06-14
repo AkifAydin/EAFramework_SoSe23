@@ -4,11 +4,16 @@ import java.awt.*;
 
 public class MovableObject extends Polygon {
 
-    public MovableObject(int[] xPoints, int[] yPoints, int numPoints) {
-        super(xPoints, yPoints, numPoints);
+    private int centerPointX;
+    private int centerPointY;
+
+    public MovableObject(int[] xPoints, int[] yPoints, Point centerPoint) {
+        super(xPoints, yPoints, xPoints.length);
+        this.centerPointX = centerPoint.x;
+        this.centerPointY = centerPoint.y;
     }
 
-    public void moveTo(double angleDegrees, double distance) {
+    public void moveToByAngleAndDist(double angleDegrees, double distance) {
         // Convert angle from degrees to radians
         double angleRadians = Math.toRadians(angleDegrees);
 
@@ -16,33 +21,30 @@ public class MovableObject extends Polygon {
         long horizontalComponent = Math.round(distance * Math.cos(angleRadians));
         long verticalComponent = Math.round(distance * Math.sin(angleRadians));
 
-        int pointLen = xpoints.length;
-
-        for (int i = 0; i < pointLen; i++) {
+        for (int i = 0; i < npoints; i++) {
             // Calculate the new coordinates
             xpoints[i] = (int) (xpoints[i] + horizontalComponent);
             ypoints[i] = (int) (ypoints[i] + verticalComponent);
         }
+
+        centerPointX = (int) (centerPointX + horizontalComponent);
+        centerPointY = (int) (centerPointY + verticalComponent);
     }
 
-    public void moveTo(int onXAxis, int onYAxis) {
-        // Convert angle from degrees to radians
-//        double angleRadians = Math.toRadians(angleDegrees);
-//
-//        // Calculate the horizontal and vertical components
-//        long horizontalComponent = Math.round(distance * Math.cos(angleRadians));
-//        long verticalComponent = Math.round(distance * Math.sin(angleRadians));
-//
-//        int pointLen = xpoints.length;
-//
-//        for (int i = 0; i < pointLen; i++) {
-//            // Calculate the new coordinates
-//            xpoints[i] = (int) (xpoints[i] + horizontalComponent);
-//            ypoints[i] = (int) (ypoints[i] + verticalComponent);
-//        }
+    public void moveToByDelta(double deltaX, double deltaY) {
+        for (int i = 0; i < npoints; i++) {
+            // Calculate the new coordinates
+            xpoints[i] += (int) deltaX;
+            ypoints[i] += (int) deltaY;
+        }
+
+        centerPointX += (int) deltaX;
+        centerPointY += (int) deltaY;
     }
 
-    public void turn(Point referencePoint, double angle) {
+    public void turn(double refX, double refY, double angle) {
+        Point referencePoint = new Point((int) refX, (int) refY);
+
         double theta = angle * (Math.PI / 180); // Convert angle to radians
 
         int pointLen = xpoints.length;

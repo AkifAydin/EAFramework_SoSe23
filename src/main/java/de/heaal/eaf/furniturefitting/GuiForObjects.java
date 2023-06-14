@@ -25,14 +25,12 @@ public class GuiForObjects extends JPanel {
         // Create a polygon with some points
         int[] xPoints1 = {200, 400, 400, 200};
         int[] yPoints1 = {200, 200, 400, 400};
-        int numPoints1 = 4;
-        MovableObject m1 = new MovableObject(xPoints1, yPoints1, numPoints1);
+        MovableObject m1 = new MovableObject(xPoints1, yPoints1, new Point(200, 200));
 
         // Create a polygon with some points
         int[] xPoints2 = {300, 500, 500, 300};
         int[] yPoints2 = {300, 300, 500, 500};
-        int numPoints2 = 4;
-        MovableObject m2 = new MovableObject(xPoints2, yPoints2, numPoints2);
+        MovableObject m2 = new MovableObject(xPoints2, yPoints2, new Point(300, 300));
 
         Polygon movableObject = CollisionTestField.getTrailOfPolygons(m1, m2);
 //        Polygon movableObject = CollisionTestField.connectTwoPolygons(m1, m2);

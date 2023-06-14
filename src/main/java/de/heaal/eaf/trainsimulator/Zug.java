@@ -99,6 +99,7 @@ public class Zug {
         public Double apply(Double[] v) {
             zug.setGeschwindigkeit(v[0]);
             return v[0];
+//            return 0.0;
         }
 
     }
