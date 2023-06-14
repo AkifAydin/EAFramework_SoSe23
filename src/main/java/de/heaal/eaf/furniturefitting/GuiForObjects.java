@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GuiForObjects extends JPanel {
-    private MovableObject polygon;
+    private Polygon polygon;
 
-    public GuiForObjects(MovableObject polygon) {
+    public GuiForObjects(Polygon polygon) {
         this.polygon = polygon;
     }
 
@@ -23,49 +23,35 @@ public class GuiForObjects extends JPanel {
 
     public static void main(String[] args) throws InterruptedException {
         // Create a polygon with some points
-        int[] xPoints = {50, 150, 200, 100};
-        int[] yPoints = {50, 100, 150, 200};
-        int numPoints = 4;
-        MovableObject polygon = new MovableObject(xPoints, yPoints, numPoints);
+        int[] xPoints1 = {200, 400, 400, 200};
+        int[] yPoints1 = {200, 200, 400, 400};
+        int numPoints1 = 4;
+        MovableObject m1 = new MovableObject(xPoints1, yPoints1, numPoints1);
 
-        // Create a JFrame and add the polygon visualization panel to it
+        // Create a polygon with some points
+        int[] xPoints2 = {300, 500, 500, 300};
+        int[] yPoints2 = {300, 300, 500, 500};
+        int numPoints2 = 4;
+        MovableObject m2 = new MovableObject(xPoints2, yPoints2, numPoints2);
+
+        Polygon movableObject = CollisionTestField.getTrailOfPolygons(m1, m2);
+//        Polygon movableObject = CollisionTestField.connectTwoPolygons(m1, m2);
+
+        // Create a JFrame and add the movableObject visualization panel to it
         JFrame frame = new JFrame("Polygon Visualization");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new GuiForObjects(polygon));
+        frame.getContentPane().add(new GuiForObjects(movableObject));
         frame.pack();
         frame.setVisible(true);
 
-        Thread.sleep(1000);
-        polygon.moveTo(0, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(45, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(90, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(135, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(180, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(225, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(270, 150);
-        frame.repaint();
-
-        Thread.sleep(100);
-        polygon.moveTo(315, 150);
-        frame.repaint();
-
+//        Thread.sleep(2000);
+//        movableObject.turn(new Point(175, 125), 45);
+//        frame.repaint();
+//
+//        for (int i = 0; i < 153; i++) {
+//            Thread.sleep(20);
+//            movableObject.turn(new Point(175, 125), 45);
+//            frame.repaint();
+//        }
     }
 }
