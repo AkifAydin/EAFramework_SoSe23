@@ -73,12 +73,12 @@ public abstract class MoveableObjectOperation implements Op<Double> {
 
         @Override
         public int arity() {
-            return 3;
+            return 2;
         }
 
         @Override
         public Double apply(Double[] doubles) {
-            movableObject.turn(doubles[0], doubles[1], doubles[2]);
+            movableObject.turn(doubles[0], doubles[1]);
             return 0.0;
         }
     }

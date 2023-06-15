@@ -1,38 +1,24 @@
 package de.heaal.eaf.furniturefitting;
 
-import de.heaal.eaf.trainsimulator.Zug;
 import io.jenetics.Genotype;
 import io.jenetics.prog.ProgramGene;
 import io.jenetics.prog.op.Op;
 
 import java.awt.*;
 
-import static de.heaal.eaf.trainsimulator.Zugfahrt.*;
+import static de.heaal.eaf.furniturefitting.FitnessMeasures.*;
 
 public class MovableObjectFitnessFunction {
 
-    public static final double WEIGHT_REMAINING_DISTANCE = 0.0;
-    public static final double WEIGHT_TRAVELED_DISTANCE = 0.0;
-    public static final double WEIGHT_MOVES = 0.0; // TODO Another way to reduce the tree?
-    public static final double WEIGHT_TURNS = 0.0;
-    public static final double WEIGHT_WALL_TOUCHES_CONST = 0.0;
-    public static final double WEIGHT_WALL_TOUCHES = 0.0;
-
     public static double calcFitness(Genotype<ProgramGene<Double>> ind) {
-//        Zug zug = executeFunctionOnTrain(ind, MAX_NODES);
-//
-//        return calcFitnessWithWeights(zug); //  * WEIGHT_DIST + zug.getEnergie() * WEIGHT_ENERGY + zug.getElapsedTime() * WEIGHT_TIME
-
-
-
-        return 0.0;
+        MovableObject mo = executeFunctionOnMovableObjectAndRoom(ind, 10_000); // TODO Hardcoded stuff to remove.
+        return calcFitnessWithWeights(mo);
     }
 
-    public static FitnessMeasures executeFunctionOnMovableObjectAndRoom(Genotype<ProgramGene<Double>> ind, int maxNodes) {
+    public static MovableObject executeFunctionOnMovableObjectAndRoom(Genotype<ProgramGene<Double>> ind, int maxNodes) {
         MovableObject mo = SzenarioObjectGenerator.INSTANCE.getNewMovableObject();
         Polygon room = SzenarioObjectGenerator.INSTANCE.getRoom();
 
-        // Setze die Zug instance bei allen Operationen und Terminalen
         for (Op<Double> op : ind.gene().operations()) {
             if (op instanceof MoveableObjectOperation operation) {
                 operation.setMovableObject(mo);
@@ -48,28 +34,45 @@ public class MovableObjectFitnessFunction {
         for (int i = 0; i < maxNodes && i < ind.geneCount(); i++) {
             ProgramGene<Double> gene = ind.get(0).get(i);
 
+            Polygon before = mo.getMinimalCopy();
             gene.eval();
+            Polygon after = mo.getMinimalCopy();
+
+            Polygon trail = CollisionUtil.getTrailOfPolygons(before, after);
+            if (CollisionUtil.polygonsIntersect(trail, room)) {
+                mo.getFitnessMeasures().incrementWallTouches();
+            }
 
             if (mo.getDistanceToPoint(SzenarioObjectGenerator.INSTANCE.getDestination()) < 0.1) {
                 break;
             }
         }
 
-        return null; // TODO Return fitness measures
+        return mo;
     }
 
-    public static double calcFitnessWithWeights(Zug zug) {
-        if (zug.getEntfernung() != TARGET_DISTANCE) {
-            return EXTRA_MISSED_TARGET_FITNESS_COST + Math.abs(zug.getEntfernung() - TARGET_DISTANCE) * WEIGHT_DIST +
-                    zug.getElapsedTime() * WEIGHT_TIME + zug.getEnergie() * WEIGHT_ENERGY;
+    public static double calcFitnessWithWeights(MovableObject mo) {
+        double fitnessResult = 0.0;
+        FitnessMeasures fitMes = mo.getFitnessMeasures();
 
-        } else {
-            return zug.getElapsedTime() * WEIGHT_TIME + zug.getEnergie() * WEIGHT_ENERGY;
+        fitnessResult += fitMes.getNumberOfMoves() + WEIGHT_MOVES;
+        fitnessResult += fitMes.getNumberOfTurns() + WEIGHT_TURNS;
+        fitnessResult += fitMes.getTraveledDistance() + WEIGHT_TRAVELED_DISTANCE; // TODO Not traveled dist but traveled dist - |start -> end|
+
+        // Fitness of remaining distance. Only applicable if goal not reached.
+        double distanceToDestination = mo.getDistanceToPoint(SzenarioObjectGenerator.INSTANCE.getDestination());
+        if (distanceToDestination > 1.0) {
+            fitnessResult += distanceToDestination * WEIGHT_REMAINING_DISTANCE;
+            fitnessResult += WEIGHT_REMAINING_DISTANCE_CONST;
         }
+
+        // Fitness of wall touches. Only applicable if wall was touched.
+        int numberOfWallTouches = fitMes.getNumberOfWallTouches();
+        if (numberOfWallTouches > 0) {
+            fitnessResult += numberOfWallTouches * WEIGHT_WALL_TOUCHES;
+            fitnessResult += WEIGHT_WALL_TOUCHES_CONST;
+        }
+
+        return fitnessResult;
     }
-
-    private class FitnessMeasures {
-
-    }
-
 }
