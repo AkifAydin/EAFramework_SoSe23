@@ -2,21 +2,12 @@ package de.heaal.eaf.furniturefitting;
 
 import io.jenetics.prog.op.Op;
 
-import java.awt.*;
-import java.util.List;
-
 public abstract class MoveableObjectOperation implements Op<Double> {
 
     protected MovableObject movableObject;
-    protected List<Polygon> room;
-    protected Point destination; // TODO Really needed?
 
     public void setMovableObject(MovableObject movableObject) {
         this.movableObject = movableObject;
-    }
-
-    public void setRoom(List<Polygon> room) {
-        this.room = room;
     }
 
     @Override
@@ -29,7 +20,7 @@ public abstract class MoveableObjectOperation implements Op<Double> {
         return name();
     }
 
-    public abstract class MoveToByAngleAndDist extends MoveableObjectOperation {
+    public static class MoveToByAngleAndDist extends MoveableObjectOperation {
         @Override
         public String name() {
             return "MOVE_TO_BY_ANGLE";
@@ -47,7 +38,7 @@ public abstract class MoveableObjectOperation implements Op<Double> {
         }
     }
 
-    public abstract class MoveToByDelta extends MoveableObjectOperation {
+    public static class MoveToByDelta extends MoveableObjectOperation {
         @Override
         public String name() {
             return "MOVE_TO_BY_DELTA";
@@ -65,7 +56,7 @@ public abstract class MoveableObjectOperation implements Op<Double> {
         }
     }
 
-    public abstract class Turn extends MoveableObjectOperation {
+    public static class Turn extends MoveableObjectOperation {
         @Override
         public String name() {
             return "TURN";
@@ -83,7 +74,7 @@ public abstract class MoveableObjectOperation implements Op<Double> {
         }
     }
 
-    public abstract class CombineTwoActions extends MoveableObjectOperation {
+    public static class CombineTwoActions extends MoveableObjectOperation {
         @Override
         public String name() {
             return "COMB_TWO";
@@ -100,7 +91,7 @@ public abstract class MoveableObjectOperation implements Op<Double> {
         }
     }
 
-    public abstract class CombineTHREEActions extends MoveableObjectOperation {
+    public static class CombineThreeActions extends MoveableObjectOperation {
         @Override
         public String name() {
             return "COMB_THREE";

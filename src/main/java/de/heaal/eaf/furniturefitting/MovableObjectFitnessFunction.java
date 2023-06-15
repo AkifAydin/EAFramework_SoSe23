@@ -10,14 +10,16 @@ import static de.heaal.eaf.furniturefitting.FitnessMeasures.*;
 
 public class MovableObjectFitnessFunction {
 
+    private static final int MAX_NODES = 100; // TODO To many constants at different locations. Put into file!
+
     public static double calcFitness(Genotype<ProgramGene<Double>> ind) {
-        MovableObject mo = executeFunctionOnMovableObjectAndRoom(ind, 10_000); // TODO Hardcoded stuff to remove.
+        MovableObject mo = executeFunctionOnMovableObjectAndRoom(ind);
         return calcFitnessWithWeights(mo);
     }
 
-    public static MovableObject executeFunctionOnMovableObjectAndRoom(Genotype<ProgramGene<Double>> ind, int maxNodes) {
-        MovableObject mo = SzenarioObjectGenerator.INSTANCE.getNewMovableObject();
-        Polygon room = SzenarioObjectGenerator.INSTANCE.getRoom();
+    public static MovableObject executeFunctionOnMovableObjectAndRoom(Genotype<ProgramGene<Double>> ind) {
+        MovableObject mo = ScenarioObjectGenerator.INSTANCE.getNewMovableObject();
+        Polygon room = ScenarioObjectGenerator.INSTANCE.getRoom();
 
         for (Op<Double> op : ind.gene().operations()) {
             if (op instanceof MoveableObjectOperation operation) {
@@ -31,19 +33,22 @@ public class MovableObjectFitnessFunction {
             }
         }
 
-        for (int i = 0; i < maxNodes && i < ind.geneCount(); i++) {
+        // TODO Let the Program run maxNodes VALID operations.
+        for (int i = 0; i < MAX_NODES && i < ind.geneCount(); i++) {
             ProgramGene<Double> gene = ind.get(0).get(i);
 
             Polygon before = mo.getMinimalCopy();
             gene.eval();
             Polygon after = mo.getMinimalCopy();
 
+            // TODO If the move was invalid delete it from the tree!
+
             Polygon trail = CollisionUtil.getTrailOfPolygons(before, after);
             if (CollisionUtil.polygonsIntersect(trail, room)) {
                 mo.getFitnessMeasures().incrementWallTouches();
             }
 
-            if (mo.getDistanceToPoint(SzenarioObjectGenerator.INSTANCE.getDestination()) < 0.1) {
+            if (mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination()) < REMAINING_DISTNACE_TOLLERANCE) {
                 break;
             }
         }
@@ -60,8 +65,8 @@ public class MovableObjectFitnessFunction {
         fitnessResult += fitMes.getTraveledDistance() + WEIGHT_TRAVELED_DISTANCE; // TODO Not traveled dist but traveled dist - |start -> end|
 
         // Fitness of remaining distance. Only applicable if goal not reached.
-        double distanceToDestination = mo.getDistanceToPoint(SzenarioObjectGenerator.INSTANCE.getDestination());
-        if (distanceToDestination > 1.0) {
+        double distanceToDestination = mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination());
+        if (distanceToDestination > REMAINING_DISTNACE_TOLLERANCE) {
             fitnessResult += distanceToDestination * WEIGHT_REMAINING_DISTANCE;
             fitnessResult += WEIGHT_REMAINING_DISTANCE_CONST;
         }
