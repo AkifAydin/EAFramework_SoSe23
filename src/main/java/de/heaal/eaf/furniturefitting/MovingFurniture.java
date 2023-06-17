@@ -17,19 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.heaal.eaf.trainsimulator.FitnessFunctions.calcDfltFitness;
+import static de.heaal.eaf.furniturefitting.MovableObjectFitnessFunction.calcFitness;
 
 public class MovingFurniture {
 
-    private static final int POP_SIZE = 35;
-    private static final int GENERATIONS = 10;
+    private static final int POP_SIZE = 50;
+    private static final int GENERATIONS = 30;
 
     public static void main(String[] args) {
 
         final ISeq<Op<Double>> operations = ISeq.of(
                 new MoveableObjectOperation.MoveToByAngleAndDist(),
                 new MoveableObjectOperation.MoveToByDelta(),
-//                new MoveableObjectOperation.Turn(),
+                new MoveableObjectOperation.Turn(),
                 new MoveableObjectOperation.CombineTwoActions(),
                 new MoveableObjectOperation.CombineThreeActions()
         );
@@ -37,7 +37,7 @@ public class MovingFurniture {
         final ISeq<Op<Double>> terminals = MovableObject.getPossibleTerminals();
 
         // Create an initial chromosome/program
-        final ProgramChromosome<Double> program = ProgramChromosome.of(10, operations, terminals);
+        final ProgramChromosome<Double> program = ProgramChromosome.of(3, operations, terminals);
 
         final Engine<ProgramGene<Double>, Double> engine = Engine
                 .builder(MovableObjectFitnessFunction::calcFitness /* Fitness function*/, program /* First initial chromosome*/)
@@ -56,8 +56,8 @@ public class MovingFurniture {
         EvolutionResult<ProgramGene<Double>, Double> result = results.get(results.size() - 1); // last generation
         List<Genotype<ProgramGene<Double>>> pop = new ArrayList<>(result.genotypes().asList());
         pop.sort((a, b) -> {
-            double e1 = calcDfltFitness(a);
-            double e2 = calcDfltFitness(b);
+            double e1 = calcFitness(a);
+            double e2 = calcFitness(b);
             if (e1 > e2) {
                 return 1;
             } else if (e2 > e1) {
@@ -72,8 +72,10 @@ public class MovingFurniture {
 
         System.out.println("Generations:      " + result.totalGenerations());
         System.out.println("Function:         " + tree);
-        System.out.println("Error:            " + calcDfltFitness(pop.get(0)));
+        System.out.println("Error:            " + calcFitness(pop.get(0)));
         MovableObject mo = MovableObjectFitnessFunction.executeFunctionOnMovableObjectAndRoom(pop.get(0)); // TODO HARDCODED
+        System.out.println("Wall touches:     " + mo.getFitnessMeasures().getNumberOfWallTouches());
+
 
         System.out.println(mo.getCenterPoint());
         System.out.println("[" + mo.xpoints[0] + "," + mo.ypoints[0] +  "]");

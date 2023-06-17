@@ -35,7 +35,7 @@ public enum ScenarioObjectGenerator {
 
     public Point2D getDestination() {
         if (destination == null) {
-            destination = new Point2D.Double(80.0, 50.0);
+            destination = new Point2D.Double(80.0, 40.0);
         }
 
         return destination;

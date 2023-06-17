@@ -15,25 +15,29 @@ public class MovableObject extends Polygon {
     /**
      * A center point in the object, which has to align with a target point in the room
      */
-    private Point2D centerPoint;
+    protected Point2D centerPoint;
 
     /**
      * To save values for the fitness calculation
      */
-    private FitnessMeasures fitnessMeasures = new FitnessMeasures();
+    protected FitnessMeasures fitnessMeasures = new FitnessMeasures();
 
     /**
      * A list with generated points on which turning operations can take place
      */
-    private List<Point2D> turnPoints = new ArrayList<>();
+    private List<Point2D.Double> turnPoints = new ArrayList<>();
 
     /**
      * A marker if the last move was valid. Important if a method was called with invalid parameter.
      */
     private boolean lastMoveWasValid = false; // TODO Integrate
 
-    private double[] xDoublePoints;
-    private double[] yDoublePoints;
+    private MovableObjectCache movableObjectCache = null;
+
+    protected double[] xDoublePoints;
+    protected double[] yDoublePoints;
+
+    private MovableObject() {}
 
     public MovableObject(int[] xPoints, int[] yPoints, Point2D centerPoint) {
         super(xPoints, yPoints, xPoints.length);
@@ -41,15 +45,8 @@ public class MovableObject extends Polygon {
         this.xDoublePoints = Arrays.stream(xPoints).asDoubleStream().toArray();
         this.yDoublePoints = Arrays.stream(yPoints).asDoubleStream().toArray();
         initTurnPoints();
-    }
 
-    private void adjustPointsInUnderlyingObject() {
-        int len = this.xpoints.length;
-
-        for (int i = 0; i < len; i++) {
-            xpoints[i] = (int) Math.round(xDoublePoints[i]);
-            ypoints[i] = (int) Math.round(yDoublePoints[i]);
-        }
+        movableObjectCache = new MovableObjectCache();
     }
 
     public double getDistanceToPoint(Point2D point) {
@@ -83,6 +80,8 @@ public class MovableObject extends Polygon {
     }
 
     private void movePointsByDelta(double deltaX, double deltaY) {
+        cacheCurrentState();
+
         // Move the polygon points
         for (int i = 0; i < npoints; i++) {
             // Calculate the new coordinates
@@ -101,17 +100,6 @@ public class MovableObject extends Polygon {
         adjustPointsInUnderlyingObject();
     }
 
-    /**
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     * TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME TODO FIXME
-     *
-     * Something doesn't work like it should. Objects are getting fugging smol.
-     */
     public void turn(double turnPointIdx, double angle) {
         // TODO Maybe let the index 0 be ignored because other operations
         // Convert the point index to an absolute value and check if the index exists in the list.
@@ -120,40 +108,65 @@ public class MovableObject extends Polygon {
             return;
         }
 
+        cacheCurrentState();
         fitnessMeasures.incrementTurns();
-        Point2D referencePoint = turnPoints.get(turnPointIdxInt);
+        Point2D.Double referencePoint = turnPoints.get(turnPointIdxInt);
 
-        double theta = angle * (Math.PI / 180); // Convert angle to radians
+        double centerX = referencePoint.getX();
+        double centerY = referencePoint.getY();
+        double radians = Math.toRadians(angle);
+        double cosAngle = Math.cos(radians);
+        double sinAngle = Math.sin(radians);
 
         // Move the polygon points
-        int pointLen = xpoints.length;
-        for (int i = 0; i < pointLen; i++) {
-            double dx = xDoublePoints[i] - referencePoint.getX(); // TODO Doesn't we need to use the absolute value?
-            double dy = yDoublePoints[i] - referencePoint.getY();
+        for (int i = 0; i < xDoublePoints.length; i++) {
+            double deltaX = xDoublePoints[i] - centerX;
+            double deltaY = yDoublePoints[i] - centerY;
 
-            xDoublePoints[i] = referencePoint.getX() + dx * Math.cos(theta) - dy * Math.sin(theta);
-            yDoublePoints[i] = referencePoint.getY() + dy * Math.cos(theta) - dx * Math.sin(theta);
+            // Apply rotation
+            double rotatedX = (deltaX * cosAngle) - (deltaY * sinAngle);
+            double rotatedY = (deltaX * sinAngle) + (deltaY * cosAngle);
+
+            // Translate back to the original position
+            xDoublePoints[i] = rotatedX + centerX;
+            yDoublePoints[i] = rotatedY + centerY;
         }
 
-        // Move the turn points
-        for (Point2D p : turnPoints) {
-            double dx = p.getX() - referencePoint.getX();
-            double dy = p.getY() - referencePoint.getY();
 
-            double newX = referencePoint.getX() + dx * Math.cos(theta) - dy * Math.sin(theta);
-            double newY = referencePoint.getY() + dy * Math.cos(theta) - dx * Math.sin(theta);
-            p.setLocation(newX, newY);
+        // Move the turn points
+        for (Point2D.Double point : turnPoints) {
+            double deltaX = point.getX() - centerX;
+            double deltaY = point.getY() - centerY;
+
+            // Apply rotation
+            double rotatedX = (deltaX * cosAngle) - (deltaY * sinAngle);
+            double rotatedY = (deltaX * sinAngle) + (deltaY * cosAngle);
+
+            // Translate back to the original position
+            point.setLocation(rotatedX + centerX, rotatedY + centerY);
         }
 
         // Move the center point
-        double dx = centerPoint.getX() - referencePoint.getX();
-        double dy = centerPoint.getY() - referencePoint.getY();
+        double deltaX = centerPoint.getX() - centerX;
+        double deltaY = centerPoint.getY() - centerY;
 
-        double newX = referencePoint.getX() + dx * Math.cos(theta) - dy * Math.sin(theta);
-        double newY = referencePoint.getY() + dy * Math.cos(theta) - dx * Math.sin(theta);
-        centerPoint.setLocation(newX, newY);
+        // Apply rotation
+        double rotatedX = (deltaX * cosAngle) - (deltaY * sinAngle);
+        double rotatedY = (deltaX * sinAngle) + (deltaY * cosAngle);
+
+        // Translate back to the original position
+        centerPoint.setLocation(rotatedX + centerX, rotatedY + centerY);
 
         adjustPointsInUnderlyingObject();
+    }
+
+    private void adjustPointsInUnderlyingObject() {
+        int len = this.xpoints.length;
+
+        for (int i = 0; i < len; i++) {
+            xpoints[i] = (int) Math.round(xDoublePoints[i]);
+            ypoints[i] = (int) Math.round(yDoublePoints[i]);
+        }
     }
 
     public FitnessMeasures getFitnessMeasures() {
@@ -192,7 +205,7 @@ public class MovableObject extends Polygon {
         // Iterate over the points in the bounding rectangle with the given grid size
         for (int x = bounds.x; x <= bounds.x + bounds.width; x += xGridSize) {
             for (int y = bounds.y; y <= bounds.y + bounds.height; y += yGridSize) {
-                Point2D point = new Point2D.Double(x, y);
+                Point2D.Double point = new Point2D.Double(x, y);
 
                 // Check if the point is within the polygon
                 if (this.contains(point)) {
@@ -205,4 +218,26 @@ public class MovableObject extends Polygon {
             throw new RuntimeException("Turn Point init failed.");
         }
     }
+
+    public void revertLastStep() {
+        xDoublePoints = Arrays.copyOf(movableObjectCache.xDoublePoints, this.xDoublePoints.length);
+        yDoublePoints = Arrays.copyOf(movableObjectCache.yDoublePoints, this.yDoublePoints.length);
+        centerPoint = new Point2D.Double(movableObjectCache.centerPoint.getX(), movableObjectCache.centerPoint.getY());
+        adjustPointsInUnderlyingObject();
+
+        fitnessMeasures = movableObjectCache.fitnessMeasures;
+    }
+
+    /**
+     * Needed to revert the last step, that was executed on the object.
+     */
+    private void cacheCurrentState() {
+        movableObjectCache.xDoublePoints = Arrays.copyOf(this.xDoublePoints, this.xDoublePoints.length);
+        movableObjectCache.yDoublePoints = Arrays.copyOf(this.yDoublePoints, this.yDoublePoints.length);
+        movableObjectCache.centerPoint = new Point2D.Double(centerPoint.getX(), centerPoint.getY());
+
+        movableObjectCache.fitnessMeasures = fitnessMeasures.getCopy();
+    }
+
+    private class MovableObjectCache extends MovableObject {}
 }

@@ -10,7 +10,8 @@ import static de.heaal.eaf.furniturefitting.FitnessMeasures.*;
 
 public class MovableObjectFitnessFunction {
 
-    private static final int MAX_NODES = 100; // TODO To many constants at different locations. Put into file!
+    private static final int MAX_NODES = 150; // TODO To many constants at different locations. Put into file!
+    private static final boolean ALLOW_WALL_TOUCHES = false;
 
     public static double calcFitness(Genotype<ProgramGene<Double>> ind) {
         MovableObject mo = executeFunctionOnMovableObjectAndRoom(ind);
@@ -45,10 +46,14 @@ public class MovableObjectFitnessFunction {
 
             Polygon trail = CollisionUtil.getTrailOfPolygons(before, after);
             if (CollisionUtil.polygonsIntersect(trail, room)) {
-                mo.getFitnessMeasures().incrementWallTouches();
+                if (ALLOW_WALL_TOUCHES) {
+                    mo.getFitnessMeasures().incrementWallTouches();
+                } else {
+                    mo.revertLastStep();
+                }
             }
 
-            if (mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination()) < REMAINING_DISTNACE_TOLLERANCE) {
+            if (mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination()) < REMAINING_DISTANCE_TOLERANCE) {
                 break;
             }
         }
@@ -66,7 +71,7 @@ public class MovableObjectFitnessFunction {
 
         // Fitness of remaining distance. Only applicable if goal not reached.
         double distanceToDestination = mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination());
-        if (distanceToDestination > REMAINING_DISTNACE_TOLLERANCE) {
+        if (distanceToDestination > REMAINING_DISTANCE_TOLERANCE) {
             fitnessResult += distanceToDestination * WEIGHT_REMAINING_DISTANCE;
             fitnessResult += WEIGHT_REMAINING_DISTANCE_CONST;
         }
