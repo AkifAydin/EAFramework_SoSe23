@@ -39,7 +39,7 @@ public class MovableObjectFitnessFunction {
         scenarioVisualizer.addRoomObject(room);
 
         JFrame frame = new JFrame();
-        frame.setSize(1500, 900);
+        frame.setSize(1920, 1080);
         frame.getContentPane().add(scenarioVisualizer);
         frame.setVisible(true);
 
