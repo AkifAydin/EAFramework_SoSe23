@@ -10,6 +10,10 @@ public abstract class MoveableObjectOperation implements Op<Double> {
         this.movableObject = movableObject;
     }
 
+    public void resetMovableObject() {
+        this.movableObject = null;
+    }
+
     @Override
     public int arity() {
         return 1;

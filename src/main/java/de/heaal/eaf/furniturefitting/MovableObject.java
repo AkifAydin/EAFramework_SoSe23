@@ -12,6 +12,8 @@ import java.util.List;
 
 public class MovableObject extends Polygon {
 
+    private static final boolean ALLOW_WALL_TOUCHES = true;
+
     /**
      * A center point in the object, which has to align with a target point in the room
      */
@@ -25,7 +27,7 @@ public class MovableObject extends Polygon {
     /**
      * A list with generated points on which turning operations can take place
      */
-    private List<Point2D.Double> turnPoints = new ArrayList<>();
+    protected List<Point2D.Double> turnPoints = new ArrayList<>();
 
     /**
      * A marker if the last move was valid. Important if a method was called with invalid parameter.
@@ -36,8 +38,6 @@ public class MovableObject extends Polygon {
 
     protected double[] xDoublePoints;
     protected double[] yDoublePoints;
-
-    private MovableObject() {}
 
     public MovableObject(int[] xPoints, int[] yPoints, Point2D centerPoint) {
         super(xPoints, yPoints, xPoints.length);
@@ -54,6 +54,8 @@ public class MovableObject extends Polygon {
     }
 
     public void moveToByAngleAndDist(double angleDegrees, double distance) {
+        cacheCurrentState();
+
         // Adjust fitness measures
         fitnessMeasures.incrementMoves();
         fitnessMeasures.addTraveledDistance(distance);
@@ -70,6 +72,8 @@ public class MovableObject extends Polygon {
     }
 
     public void moveToByDelta(double deltaX, double deltaY) {
+        cacheCurrentState();
+
         // Adjust fitness measures
         fitnessMeasures.incrementMoves();
         double distance = centerPoint.distance(centerPoint.getX() + deltaX, centerPoint.getY() + deltaY);
@@ -80,8 +84,6 @@ public class MovableObject extends Polygon {
     }
 
     private void movePointsByDelta(double deltaX, double deltaY) {
-        cacheCurrentState();
-
         // Move the polygon points
         for (int i = 0; i < npoints; i++) {
             // Calculate the new coordinates
@@ -223,9 +225,17 @@ public class MovableObject extends Polygon {
         xDoublePoints = Arrays.copyOf(movableObjectCache.xDoublePoints, this.xDoublePoints.length);
         yDoublePoints = Arrays.copyOf(movableObjectCache.yDoublePoints, this.yDoublePoints.length);
         centerPoint = new Point2D.Double(movableObjectCache.centerPoint.getX(), movableObjectCache.centerPoint.getY());
+
+        List<Point2D.Double> cachedTurnPoints = new ArrayList<>();
+        for (Point2D.Double p : movableObjectCache.turnPoints) {
+            cachedTurnPoints.add(new Point2D.Double(p.getX(), p.getY()));
+        }
+
+        turnPoints = cachedTurnPoints;
+
         adjustPointsInUnderlyingObject();
 
-        fitnessMeasures = movableObjectCache.fitnessMeasures;
+        fitnessMeasures = movableObjectCache.fitnessMeasures.getCopy();
     }
 
     /**
@@ -236,8 +246,25 @@ public class MovableObject extends Polygon {
         movableObjectCache.yDoublePoints = Arrays.copyOf(this.yDoublePoints, this.yDoublePoints.length);
         movableObjectCache.centerPoint = new Point2D.Double(centerPoint.getX(), centerPoint.getY());
 
+        List<Point2D.Double> cachedTurnPoints = new ArrayList<>();
+        for (Point2D.Double p : turnPoints) {
+            cachedTurnPoints.add(new Point2D.Double(p.getX(), p.getY()));
+        }
+
+        movableObjectCache.turnPoints = cachedTurnPoints;
+
         movableObjectCache.fitnessMeasures = fitnessMeasures.getCopy();
     }
 
-    private class MovableObjectCache extends MovableObject {}
+    private class MovableObjectCache {
+        protected Point2D centerPoint;
+
+        protected FitnessMeasures fitnessMeasures = new FitnessMeasures();
+
+        protected List<Point2D.Double> turnPoints = new ArrayList<>();
+
+        protected double[] xDoublePoints;
+        protected double[] yDoublePoints;
+    }
+
 }

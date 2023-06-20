@@ -37,7 +37,7 @@ public class MovingFurniture {
         final ISeq<Op<Double>> terminals = MovableObject.getPossibleTerminals();
 
         // Create an initial chromosome/program
-        final ProgramChromosome<Double> program = ProgramChromosome.of(3, operations, terminals);
+        final ProgramChromosome<Double> program = ProgramChromosome.of(5, operations, terminals);
 
         final Engine<ProgramGene<Double>, Double> engine = Engine
                 .builder(MovableObjectFitnessFunction::calcFitness /* Fitness function*/, program /* First initial chromosome*/)
@@ -76,17 +76,19 @@ public class MovingFurniture {
         MovableObject mo = MovableObjectFitnessFunction.executeFunctionOnMovableObjectAndRoom(pop.get(0)); // TODO HARDCODED
         System.out.println("Wall touches:     " + mo.getFitnessMeasures().getNumberOfWallTouches());
 
-
         System.out.println(mo.getCenterPoint());
         System.out.println("[" + mo.xpoints[0] + "," + mo.ypoints[0] +  "]");
 
-        ScenarioVisualizer sv = new ScenarioVisualizer();
-        sv.addRoomObject(ScenarioObjectGenerator.INSTANCE.getRoom());
-        sv.setMovableObject(mo);
+        MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
+        MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
 
-        JFrame frame = new JFrame();
-        frame.setSize(1500, 900);
-        frame.getContentPane().add(sv);
-        frame.setVisible(true);
+//        ScenarioVisualizer sv = new ScenarioVisualizer();
+//        sv.addRoomObject(ScenarioObjectGenerator.INSTANCE.getRoom());
+//        sv.setMovableObject(mo);
+//
+//        JFrame frame = new JFrame();
+//        frame.setSize(1500, 900);
+//        frame.getContentPane().add(sv);
+//        frame.setVisible(true);
     }
 }

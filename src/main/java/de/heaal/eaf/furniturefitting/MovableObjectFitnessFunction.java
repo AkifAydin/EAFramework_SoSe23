@@ -4,6 +4,7 @@ import io.jenetics.Genotype;
 import io.jenetics.prog.ProgramGene;
 import io.jenetics.prog.op.Op;
 
+import javax.swing.*;
 import java.awt.*;
 
 import static de.heaal.eaf.furniturefitting.FitnessMeasures.*;
@@ -11,16 +12,58 @@ import static de.heaal.eaf.furniturefitting.FitnessMeasures.*;
 public class MovableObjectFitnessFunction {
 
     private static final int MAX_NODES = 150; // TODO To many constants at different locations. Put into file!
-    private static final boolean ALLOW_WALL_TOUCHES = false;
 
     public static double calcFitness(Genotype<ProgramGene<Double>> ind) {
         MovableObject mo = executeFunctionOnMovableObjectAndRoom(ind);
         return calcFitnessWithWeights(mo);
     }
 
-    public static MovableObject executeFunctionOnMovableObjectAndRoom(Genotype<ProgramGene<Double>> ind) {
+    public static void visualizeFunction(Genotype<ProgramGene<Double>> ind) {
         MovableObject mo = ScenarioObjectGenerator.INSTANCE.getNewMovableObject();
         Polygon room = ScenarioObjectGenerator.INSTANCE.getRoom();
+
+        for (Op<Double> op : ind.gene().operations()) {
+            if (op instanceof MoveableObjectOperation operation) {
+                operation.setMovableObject(mo);
+            }
+        }
+
+        for (Op<Double> op : ind.gene().terminals()) {
+            if (op instanceof MoveableObjectOperation operation) {
+                operation.setMovableObject(mo);
+            }
+        }
+
+        ScenarioVisualizer scenarioVisualizer = new ScenarioVisualizer();
+        scenarioVisualizer.setMovableObject(mo);
+        scenarioVisualizer.addRoomObject(room);
+
+        JFrame frame = new JFrame();
+        frame.setSize(1500, 900);
+        frame.getContentPane().add(scenarioVisualizer);
+        frame.setVisible(true);
+
+        for (int i = 0; i < MAX_NODES && i < ind.geneCount(); i++) {
+            ProgramGene<Double> gene = ind.get(0).get(i);
+
+            gene.eval();
+
+            if (mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination()) < REMAINING_DISTANCE_TOLERANCE) {
+                break;
+            }
+
+            frame.repaint();
+
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                // DO NOTHING
+            }
+        }
+    }
+
+    public static MovableObject executeFunctionOnMovableObjectAndRoom(Genotype<ProgramGene<Double>> ind) {
+        MovableObject mo = ScenarioObjectGenerator.INSTANCE.getNewMovableObject();
 
         for (Op<Double> op : ind.gene().operations()) {
             if (op instanceof MoveableObjectOperation operation) {
@@ -38,20 +81,9 @@ public class MovableObjectFitnessFunction {
         for (int i = 0; i < MAX_NODES && i < ind.geneCount(); i++) {
             ProgramGene<Double> gene = ind.get(0).get(i);
 
-            Polygon before = mo.getMinimalCopy();
             gene.eval();
-            Polygon after = mo.getMinimalCopy();
 
             // TODO If the move was invalid delete it from the tree!
-
-            Polygon trail = CollisionUtil.getTrailOfPolygons(before, after);
-            if (CollisionUtil.polygonsIntersect(trail, room)) {
-                if (ALLOW_WALL_TOUCHES) {
-                    mo.getFitnessMeasures().incrementWallTouches();
-                } else {
-                    mo.revertLastStep();
-                }
-            }
 
             if (mo.getDistanceToPoint(ScenarioObjectGenerator.INSTANCE.getDestination()) < REMAINING_DISTANCE_TOLERANCE) {
                 break;
