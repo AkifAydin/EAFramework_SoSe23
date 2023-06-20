@@ -6,14 +6,16 @@ package de.heaal.eaf.furniturefitting;
  */
 public class FitnessMeasures {
 
-    public static final double REMAINING_DISTANCE_TOLERANCE = 20.0;
-    public static final double WEIGHT_REMAINING_DISTANCE = 5.0;
-    public static final double WEIGHT_REMAINING_DISTANCE_CONST = 5000.0;
+    public static final int MAX_NODES = 300;
+
+    public static final double REMAINING_DISTANCE_TOLERANCE = 50.0;
+    public static final double WEIGHT_REMAINING_DISTANCE = 30.0;
+    public static final double WEIGHT_REMAINING_DISTANCE_CONST = 0.0;
     public static final double WEIGHT_TRAVELED_DISTANCE = 0.0;
-    public static final double WEIGHT_MOVES = 0.0; // TODO Another way to reduce the tree?
+    public static final double WEIGHT_MOVES = 0.0;
     public static final double WEIGHT_TURNS = 0.0;
-    public static final double WEIGHT_WALL_TOUCHES_CONST = 200.0;
-    public static final double WEIGHT_WALL_TOUCHES = 5000.0;
+    public static final double WEIGHT_WALL_TOUCHES_CONST = 50_000.0;
+    public static final double WEIGHT_WALL_TOUCHES = 0.0;
 
     private double traveledDistance = 0.0;
     private int numberOfMoves = 0;

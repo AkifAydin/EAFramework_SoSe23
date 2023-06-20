@@ -12,7 +12,6 @@ import io.jenetics.prog.ProgramGene;
 import io.jenetics.prog.op.Op;
 import io.jenetics.util.ISeq;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +20,8 @@ import static de.heaal.eaf.furniturefitting.MovableObjectFitnessFunction.calcFit
 
 public class MovingFurniture {
 
-    private static final int POP_SIZE = 50;
-    private static final int GENERATIONS = 30;
+    private static final int POP_SIZE = 100;
+    private static final int GENERATIONS = 20;
 
     public static void main(String[] args) {
 
@@ -76,19 +75,12 @@ public class MovingFurniture {
         MovableObject mo = MovableObjectFitnessFunction.executeFunctionOnMovableObjectAndRoom(pop.get(0)); // TODO HARDCODED
         System.out.println("Wall touches:     " + mo.getFitnessMeasures().getNumberOfWallTouches());
 
-        System.out.println(mo.getCenterPoint());
+        System.out.println("Center Point:     "  + mo.getCenterPoint());
+        System.out.println("Goal Point:       "  + ScenarioObjectGenerator.INSTANCE.getDestination());
+
         System.out.println("[" + mo.xpoints[0] + "," + mo.ypoints[0] +  "]");
 
         MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
-        MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
-
-//        ScenarioVisualizer sv = new ScenarioVisualizer();
-//        sv.addRoomObject(ScenarioObjectGenerator.INSTANCE.getRoom());
-//        sv.setMovableObject(mo);
-//
-//        JFrame frame = new JFrame();
-//        frame.setSize(1500, 900);
-//        frame.getContentPane().add(sv);
-//        frame.setVisible(true);
+//        MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
     }
 }
