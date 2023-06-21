@@ -39,6 +39,8 @@ public class MovableObjectFitnessFunction {
         JFrame frame = new JFrame();
         frame.setSize(1920, 1080);
         frame.getContentPane().add(scenarioVisualizer);
+        frame.toFront();
+        frame.requestFocus();
         frame.setVisible(true);
 
         for (int i = 0; i < MAX_NODES && i < ind.geneCount(); i++) {

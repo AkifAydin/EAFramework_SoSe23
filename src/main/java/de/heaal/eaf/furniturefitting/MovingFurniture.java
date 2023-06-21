@@ -20,8 +20,8 @@ import static de.heaal.eaf.furniturefitting.MovableObjectFitnessFunction.calcFit
 
 public class MovingFurniture {
 
-    private static final int POP_SIZE = 100;
-    private static final int GENERATIONS = 20;
+    private static final int POP_SIZE = 75;
+    private static final int GENERATIONS = 50;
 
     public static void main(String[] args) {
 
@@ -78,9 +78,6 @@ public class MovingFurniture {
         System.out.println("Center Point:     "  + mo.getCenterPoint());
         System.out.println("Goal Point:       "  + ScenarioObjectGenerator.INSTANCE.getDestination());
 
-        System.out.println("[" + mo.xpoints[0] + "," + mo.ypoints[0] +  "]");
-
         MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
-//        MovableObjectFitnessFunction.visualizeFunction(pop.get(0));
     }
 }
